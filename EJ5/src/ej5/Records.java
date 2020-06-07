@@ -13,7 +13,7 @@ public class Records extends JDialog {
     private JTextArea txa = new JTextArea();
 
     public Records(LoteriaCurro c) {
-        super(c,"Records");
+        super(c,"Records",true);
         this.l = c;
         this.txa.setSize(this.txa.getPreferredSize());
         this.add(txa);

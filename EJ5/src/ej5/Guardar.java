@@ -19,7 +19,7 @@ public class Guardar extends JDialog implements ActionListener {
     private JButton cancelar = new JButton("Cancelar");
 
     public Guardar(LoteriaCurro c) {
-        super(c, "Guardar");
+        super(c, "Guardar",true);
         this.setLayout(null);
         this.l = c;
         
