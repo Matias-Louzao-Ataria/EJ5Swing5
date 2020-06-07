@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import java.awt.Color;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 
 public class LoteriaCurro extends JFrame implements ActionListener{
@@ -16,12 +17,16 @@ public class LoteriaCurro extends JFrame implements ActionListener{
     private ArrayList<Integer> numeros = new ArrayList<Integer>();
     private ArrayList<Integer> numerosusuario = new ArrayList<Integer>();
     private JMenuBar menu = new JMenuBar();
-    JMenuItem guardar = new JMenuItem("Guardar");
-    JMenuItem records = new JMenuItem("Ver records");
-    private Secundario s;
+    private JMenuItem guardar = new JMenuItem("Guardar");
+    private JMenuItem records = new JMenuItem("Ver records");
+    private Guardar s;
+    private File file = new File(System.getProperty("user.home")+System.getProperty("file.separator")+".records.txt");
+    private Records record;
+    private Timer timer = new Timer(300, this);
+    private int conttitulo = 1;
 
     public LoteriaCurro() {
-        super("EJ5");
+        super("Lotería");
         this.setLayout(null);
 
         for(int i = 0;i < 49;i++){
@@ -66,23 +71,28 @@ public class LoteriaCurro extends JFrame implements ActionListener{
         guardar.addActionListener(this);
         opciones.add(guardar);
 
-        opciones.addActionListener(this);
+        records.addActionListener(this);
         opciones.add(records);
 
         this.menu.add(opciones);
         this.menu.setSize(this.menu.getPreferredSize());
         this.add(menu);
+
+        this.timer.start();
     }
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
 
         if(arg0.getSource() == this.guardar){
-            s = new Secundario(this);
+            s = new Guardar(this);
             s.setSize(270,500);
             s.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             s.setVisible(true);
         }else if(arg0.getSource() == this.jugar){
+            this.acertados.setText("Acertados:");
+            this.fallados.setText("Fallados:");
+
             generar();
 
             if(comprobar()){
@@ -98,8 +108,21 @@ public class LoteriaCurro extends JFrame implements ActionListener{
             }else{
                 JOptionPane.showMessageDialog(this, "Seleccione 6 números.");
             }
+        }else if(arg0.getSource() == this.timer){
+            String titulo = "Lotería";
+            if(this.conttitulo > titulo.length()){
+                this.conttitulo = 1;
+            }
+            this.setTitle("");
+            for(int i = 0;i < this.conttitulo;i++){
+                this.setTitle(this.getTitle()+titulo.charAt(i));
+            }
+            this.conttitulo++;
         }else{
-
+            record = new Records(this);
+            record.setSize(200,250);
+            record.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            record.setVisible(true);
         }
         
     }
@@ -124,6 +147,7 @@ public class LoteriaCurro extends JFrame implements ActionListener{
 
     private void generar() {
         int num = 0;
+        this.numeros = new ArrayList<Integer>();
         for(int i = 0;i < 6;i++){
             num = (int)(Math.random()*49+1);
             
@@ -133,5 +157,13 @@ public class LoteriaCurro extends JFrame implements ActionListener{
               this.numeros.add(num);
             }
         }
+    }
+
+    public JLabel getAcertados() {
+        return acertados;
+    }
+
+    public File getFile() {
+        return file;
     }
 }
