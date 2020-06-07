@@ -16,6 +16,7 @@ public class Records extends JDialog {
         super(c,"Records",true);
         this.l = c;
         this.txa.setSize(this.txa.getPreferredSize());
+        this.txa.setEditable(false);
         this.add(txa);
         
         if(this.l.getFile().exists() && this.l.getFile().length() != 0){
