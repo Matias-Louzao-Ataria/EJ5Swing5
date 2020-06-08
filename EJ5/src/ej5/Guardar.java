@@ -14,7 +14,7 @@ public class Guardar extends JDialog implements ActionListener {
     
     private LoteriaCurro l;
     private JTextArea txa = new JTextArea();
-    private JLabel label = new JLabel("Escribe tu nombre entre las comillas!");
+    private JLabel label = new JLabel("<html>Tus números acertados se guardan<br> automáticamente!</html>");
     private JButton aceptar = new JButton("Aceptar");
     private JButton cancelar = new JButton("Cancelar");
 
@@ -29,9 +29,9 @@ public class Guardar extends JDialog implements ActionListener {
 
         this.txa.setRows(5);
         this.txa.setColumns(20);
-        this.txa.setText("Nombre: \"\"  "+this.l.getAcertados().getText());
+        this.txa.setText("Nombre: ");
         this.txa.setSize(this.txa.getPreferredSize());
-        this.txa.setLocation(20,50);
+        this.txa.setLocation(20,60);
         this.add(this.txa);
 
         this.aceptar.setLocation(20,150);
@@ -52,8 +52,9 @@ public class Guardar extends JDialog implements ActionListener {
         }else{
             try (PrintWriter esc = new PrintWriter(new FileWriter(this.l.getFile(),true))) {
                 String res = this.txa.getText();
-                res = res.replace("\"", "");
-                esc.append(res.replace("Nombre: ", "")+"\n");
+                esc.append(res.replace("Nombre: ", "")+" "+this.l.getAcertados().getText()+"\n");
+                JOptionPane.showMessageDialog(this, "Se ha guardado correctamente!");
+                this.dispose();
             } catch (SecurityException | IllegalArgumentException | IOException e) {
                 JOptionPane.showMessageDialog(this, "Error al escribir el archivo!");
             }

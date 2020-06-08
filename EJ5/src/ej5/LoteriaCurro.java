@@ -7,7 +7,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 
-public class LoteriaCurro extends JFrame implements ActionListener{
+public class LoteriaCurro extends JFrame implements ActionListener, ItemListener {
     
     private int x = 10,y = 30;
     private JButton jugar = new JButton("Jugar");
@@ -15,7 +15,7 @@ public class LoteriaCurro extends JFrame implements ActionListener{
     private JLabel acertados = new JLabel("Acertados:");
     private JLabel fallados = new JLabel("Fallados:");
     private ArrayList<Integer> numeros = new ArrayList<Integer>();
-    private ArrayList<Integer> numerosusuario = new ArrayList<Integer>();
+    private ArrayList<JCheckBox> numerosusuario = new ArrayList<JCheckBox>();
     private JMenuBar menu = new JMenuBar();
     private JMenuItem guardar = new JMenuItem("Guardar");
     private JMenuItem records = new JMenuItem("Ver records");
@@ -24,6 +24,7 @@ public class LoteriaCurro extends JFrame implements ActionListener{
     private Records record;
     private Timer timer = new Timer(300, this);
     private int conttitulo = 1;
+    private int contnum = 0;
 
     public LoteriaCurro() {
         super("Lotería");
@@ -47,6 +48,7 @@ public class LoteriaCurro extends JFrame implements ActionListener{
                 x+=inc;
                 chkbox.setLocation(x,y);
             }
+            chkbox.addItemListener(this);
             this.componentes.add(chkbox);
             this.add(chkbox);
         }
@@ -54,6 +56,7 @@ public class LoteriaCurro extends JFrame implements ActionListener{
         this.jugar.setLocation(150,240);
         this.jugar.setSize(this.jugar.getPreferredSize());
         this.jugar.addActionListener(this);
+        this.jugar.setEnabled(comprobar());
         this.add(jugar);
 
         this.acertados.setForeground(Color.GREEN);
@@ -76,7 +79,7 @@ public class LoteriaCurro extends JFrame implements ActionListener{
 
         this.menu.add(opciones);
         this.menu.setSize(this.menu.getPreferredSize());
-        this.add(menu);
+        this.setJMenuBar(menu);
 
         this.timer.start();
     }
@@ -95,19 +98,20 @@ public class LoteriaCurro extends JFrame implements ActionListener{
 
             generar();
 
-            if(comprobar()){
-                for(int i = 0;i < numerosusuario.size();i++){
-                    if(this.numeros.contains(this.numerosusuario.get(i))){
-                        this.acertados.setText(this.acertados.getText()+" "+this.numerosusuario.get(i));
-                        this.acertados.setSize(this.acertados.getPreferredSize());
-                    }else{
-                        this.fallados.setText(this.fallados.getText()+" "+this.numerosusuario.get(i));
-                        this.fallados.setSize(this.fallados.getPreferredSize());
-                    }
+            for(int i = 0;i < numerosusuario.size();i++){
+                JCheckBox actual = this.numerosusuario.get(i);
+                actual.setForeground(null);
+                if(this.numeros.contains(Integer.parseInt(actual.getText()))){
+                    this.acertados.setText(this.acertados.getText()+" "+actual.getText());
+                    this.acertados.setSize(this.acertados.getPreferredSize());
+                    actual.setForeground(Color.GREEN);
+                }else{
+                    this.fallados.setText(this.fallados.getText()+" "+actual.getText());
+                    this.fallados.setSize(this.fallados.getPreferredSize());
+                    actual.setForeground(Color.RED);
                 }
-            }else{
-                JOptionPane.showMessageDialog(this, "Seleccione 6 números.");
             }
+            
         }else if(arg0.getSource() == this.timer){
             String titulo = "Lotería";
             if(this.conttitulo > titulo.length()){
@@ -120,29 +124,28 @@ public class LoteriaCurro extends JFrame implements ActionListener{
             this.conttitulo++;
         }else{
             record = new Records(this);
-            record.setSize(200,250);
+            record.pack();
             record.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             record.setVisible(true);
         }
         
     }
 
-    private boolean comprobar() {
-        int cont = 0;
-        this.numerosusuario = new ArrayList<Integer>();
-        for(int i = 0;i < componentes.size() ;i++){
-            JCheckBox j = (JCheckBox)componentes.get(i);
-
-            if(j.isSelected()){
-                cont++;
-                this.numerosusuario.add(Integer.parseInt(j.getText()));
-            }
-        }
-        if(cont != 6){
-            return false;
+    @Override
+    public void itemStateChanged(ItemEvent arg0) {
+        JCheckBox chk = (JCheckBox)arg0.getSource();
+        if(chk.isSelected()){
+            this.contnum++;
+            this.numerosusuario.add(chk);
         }else{
-            return true;
+            this.contnum--;
+            this.numerosusuario.remove(chk);
         }
+        this.jugar.setEnabled(comprobar());
+    }
+
+    private boolean comprobar() {
+        return this.contnum == 6;
     }
 
     private void generar() {

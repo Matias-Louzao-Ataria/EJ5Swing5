@@ -24,6 +24,7 @@ public class Records extends JDialog {
                 while(sc.hasNextLine()){
                     this.txa.setText(this.txa.getText()+sc.nextLine()+"\n");
                 }
+                this.txa.setSize(this.txa.getPreferredSize());
             } catch (SecurityException | IllegalArgumentException | IOException e) {
                 JOptionPane.showMessageDialog(this, "Error al leer el archivo!");
             }
