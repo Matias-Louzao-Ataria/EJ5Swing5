@@ -89,7 +89,7 @@ public class LoteriaCurro extends JFrame implements ActionListener, ItemListener
 
         if(arg0.getSource() == this.guardar){
             s = new Guardar(this);
-            s.setSize(270,500);
+            s.setSize(270,250);
             s.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             s.setVisible(true);
         }else if(arg0.getSource() == this.jugar){
